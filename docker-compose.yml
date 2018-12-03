@@ -10,7 +10,11 @@ services:
       - "5672:5672"
   api:
     build: ./api
+    depends_on:
+      - rabbitmq
   receiver_debug:
     build: ./receiver_debug
     volumes:
      - ./receiver_debug:/code
+    depends_on:
+      - rabbitmq
