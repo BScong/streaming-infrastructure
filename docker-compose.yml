@@ -4,3 +4,13 @@ services:
     build: ./generator
     volumes:
      - ./generator:/code
+  rabbitmq:
+    build: ./rabbitmq
+    ports:
+      - "5672:5672"
+  api:
+    build: ./api
+  receiver_debug:
+    build: ./receiver_debug
+    volumes:
+     - ./receiver_debug:/code
