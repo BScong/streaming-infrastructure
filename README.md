@@ -16,6 +16,12 @@ Useful links: [Docker Compose Getting Started](https://docs.docker.com/compose/g
 ### Receipts generator
 The first task is to generate receipts samples. We use Python for that and a sample of the JSON generated is in [generator/example.json](https://github.com/BScong/streaming-infrastructure/blob/master/generator/example.json). The receipts are then sent to the system entrypoint by an endpoint (REST API).
 
+### Entrypoint
+The entrypoint to the system is a REST API deployed on port 3000.
+To send a receipt to the system, send a POST request on `localhost:3000/receipt` with the header `Content-Type` set to `application/json`. Then put the receipt JSON as the body.
+
+The API is deployed in Node.js with [Express.js](https://expressjs.com/). We chose that solution because it is easy to implement and very fast (due to the asynchronous nature of Node.js).
+
 ### Message broker
 For the message broker, we studied different solutions, including RabbitMQ and Apache Kafka.
 

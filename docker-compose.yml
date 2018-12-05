@@ -12,6 +12,8 @@ services:
     build: ./api
     depends_on:
       - rabbitmq
+    ports:
+      - "3000:3000"
   receiver_debug:
     build: ./receiver_debug
     volumes:
