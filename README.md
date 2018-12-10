@@ -52,3 +52,12 @@ We chose to go with RabbitMQ for several reasons:
  - [Understanding When to use RabbitMQ or Apache Kafka, Pivotal](https://content.pivotal.io/blog/understanding-when-to-use-rabbitmq-or-apache-kafka)
  - [Docker image for rabbitmq](https://docs.docker.com/samples/library/rabbitmq/)
  - [RabbitMQ docs](https://www.rabbitmq.com/documentation.html)
+
+#### Implementation
+For the implementation, we use [RabbitMQ with Exchanges (Pub/Sub)](https://www.rabbitmq.com/tutorials/tutorial-three-python.html).
+We will use several clients, including Python, NodeJS and Java.
+
+For the exchanges, we have:
+ - `receipts`: entrypoint for publishing receipts, every receipt JSON is sent on this exchange, and is then consumed by analytics and persistence (database).
+ - `count`: published by analytics to increase the current realtime count/sum of receipts, consumed by frontend
+ - `categories`: published by analytics to increase the current realtime count/sum of products for each category. Consumed by frontend.
