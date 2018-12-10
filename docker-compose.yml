@@ -4,6 +4,9 @@ services:
     build: ./generator
     volumes:
      - ./generator:/code
+    depends_on:
+       - rabbitmq
+       - api
   rabbitmq:
     build: ./rabbitmq
     ports:

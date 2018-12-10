@@ -1,6 +1,7 @@
 import time
+import json
 print('Starting...')
-time.sleep(10)
+time.sleep(15)
 
 import pika
 print('Started.')
@@ -11,7 +12,7 @@ channel = connection.channel()
 channel.queue_declare(queue='hello')
 
 def callback(ch, method, properties, body):
-    print(" [x] Received %r" % body)
+    print(" [x] Received %r" % json.loads(body))
 
 channel.basic_consume(callback,
                       queue='hello',
