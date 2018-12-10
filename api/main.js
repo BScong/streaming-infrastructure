@@ -17,9 +17,10 @@ app.post('/receipt', function(req,res){
 function sendReceipt(message, queue){
   amqp.connect('amqp://rabbitmq', function(err, conn) {
     conn.createChannel(function(err, ch) {
-      ch.assertQueue(queue, {durable: false});
-      ch.sendToQueue(queue, new Buffer(message));
-      console.log(" [x] Sent message to " + queue);
+      var ex = 'receipts';
+      ch.assertExchange(ex, 'fanout', {durable: false});
+      ch.publish(ex, '', new Buffer(message));
+      console.log(" [x] Sent %s", message);
     });
     setTimeout(function() {conn.close();}, 500);
   });
