@@ -59,5 +59,7 @@ We will use several clients, including Python, NodeJS and Java.
 
 For the exchanges, we have:
  - `receipts`: entrypoint for publishing receipts, every receipt JSON is sent on this exchange, and is then consumed by analytics and persistence (database).
- - `count`: published by analytics to increase the current realtime count/sum of receipts, consumed by frontend
+ - `count`: published by analytics to increase the current realtime count/sum of receipts, consumed by frontend.
  - `categories`: published by analytics to increase the current realtime count/sum of products for each category. Consumed by frontend.
+
+Some example code for Java and Python are available in the [utils folder](https://github.com/BScong/streaming-infrastructure/tree/master/utils). They are inspired from [RabbitMQ tutorials](https://github.com/rabbitmq/rabbitmq-tutorials).
