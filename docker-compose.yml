@@ -14,5 +14,11 @@ services:
     build: ./receiver_debug
     volumes:
      - ./receiver_debug:/code
+  mongo_client:
+    build: ./mongo_client
+    volumes:
+    - ./mongo_client:/code
   mongo:
     build: ./mongo
+    ports:
+      - "27017:27017"

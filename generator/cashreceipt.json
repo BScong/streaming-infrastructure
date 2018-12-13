@@ -4,61 +4,70 @@
     "terminalID": "1",
     "agentID": "1",
     "customerID": "1",
-    "date": "2018-12-03 09:20:07",
+    "date": "2018-12-13 11:23:45",
     "lines": [
         {
             "lineNumber": 1,
             "productCode": "00000015",
             "productDescription": "---",
-            "productCategoryCode": "U",
-            "productCategoryName": "TicketsPremium",
-            "quantity": 1,
+            "productCategoryCode": "L",
+            "productCategoryName": "Loto",
+            "quantity": 2,
             "unitOfMeasure": "measure",
-            "unitPrice": 0.29,
-            "creditAmount": 0.29,
-            "taxPercentage": 17,
-            "settlementAmount": 0.34
+            "unitPrice": 0.3,
+            "creditAmount": 0.6,
+            "taxPercentage": 8,
+            "settlementAmount": 0.65
         },
         {
             "lineNumber": 2,
-            "productCode": "00000018",
-            "productDescription": "---",
-            "productCategoryCode": "Q",
-            "productCategoryName": "Plans",
-            "quantity": 2,
-            "unitOfMeasure": "measure",
-            "unitPrice": 0.63,
-            "creditAmount": 1.26,
-            "taxPercentage": 10,
-            "settlementAmount": 1.39
-        },
-        {
-            "lineNumber": 3,
-            "productCode": "00000016",
+            "productCode": "00000015",
             "productDescription": "---",
             "productCategoryCode": "X",
             "productCategoryName": "Telephonie",
+            "quantity": 1,
+            "unitOfMeasure": "measure",
+            "unitPrice": 0.87,
+            "creditAmount": 0.87,
+            "taxPercentage": 7,
+            "settlementAmount": 0.93
+        },
+        {
+            "lineNumber": 3,
+            "productCode": "00000018",
+            "productDescription": "---",
+            "productCategoryCode": "7",
+            "productCategoryName": "DeveloppementPhotos",
+            "quantity": 1,
+            "unitOfMeasure": "measure",
+            "unitPrice": 0.95,
+            "creditAmount": 0.95,
+            "taxPercentage": 11,
+            "settlementAmount": 1.05
+        },
+        {
+            "lineNumber": 4,
+            "productCode": "00000011",
+            "productDescription": "---",
+            "productCategoryCode": "I",
+            "productCategoryName": "Jouets",
             "quantity": 3,
             "unitOfMeasure": "measure",
-            "unitPrice": 0.72,
-            "creditAmount": 2.16,
-            "taxPercentage": 11,
-            "settlementAmount": 2.4
+            "unitPrice": 0.62,
+            "creditAmount": 1.86,
+            "taxPercentage": 12,
+            "settlementAmount": 2.08
         }
     ],
     "documentTotal": {
-        "taxPayable": 0.42,
-        "netTotal": 3.71,
-        "grossTotal": 4.13
+        "taxPayable": 0.43,
+        "netTotal": 4.28,
+        "grossTotal": 4.71
     },
     "settlements": [
         {
-            "settlementAmount": 0.11,
+            "settlementAmount": 4.71,
             "paymentMechanism": "CB"
-        },
-        {
-            "settlementAmount": 4.02,
-            "paymentMechanism": "Especes"
         }
     ]
 }
