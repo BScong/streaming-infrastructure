@@ -16,6 +16,12 @@ Useful links: [Docker Compose Getting Started](https://docs.docker.com/compose/g
 ### Receipts generator
 The first task is to generate receipts samples. We use Python for that and a sample of the JSON generated is in [generator/example.json](https://github.com/BScong/streaming-infrastructure/blob/master/generator/example.json). The receipts are then sent to the system entrypoint by an endpoint (REST API).
 
+### Entrypoint
+The entrypoint to the system is a REST API deployed on port 3000.
+To send a receipt to the system, send a POST request on `localhost:3000/receipt` with the header `Content-Type` set to `application/json`. Then put the receipt JSON as the body.
+
+The API is deployed in Node.js with [Express.js](https://expressjs.com/). We chose that solution because it is easy to implement and very fast (due to the asynchronous nature of Node.js).
+
 ### Message broker
 For the message broker, we studied different solutions, including RabbitMQ and Apache Kafka.
 
@@ -46,3 +52,14 @@ We chose to go with RabbitMQ for several reasons:
  - [Understanding When to use RabbitMQ or Apache Kafka, Pivotal](https://content.pivotal.io/blog/understanding-when-to-use-rabbitmq-or-apache-kafka)
  - [Docker image for rabbitmq](https://docs.docker.com/samples/library/rabbitmq/)
  - [RabbitMQ docs](https://www.rabbitmq.com/documentation.html)
+
+#### Implementation
+For the implementation, we use [RabbitMQ with Exchanges (Pub/Sub)](https://www.rabbitmq.com/tutorials/tutorial-three-python.html).
+We will use several clients, including Python, NodeJS and Java.
+
+For the exchanges, we have:
+ - `receipts`: entrypoint for publishing receipts, every receipt JSON is sent on this exchange, and is then consumed by analytics and persistence (database).
+ - `count`: published by analytics to increase the current realtime count/sum of receipts, consumed by frontend.
+ - `categories`: published by analytics to increase the current realtime count/sum of products for each category. Consumed by frontend.
+
+Some example code for Java and Python are available in the [utils folder](https://github.com/BScong/streaming-infrastructure/tree/master/utils). They are inspired from [RabbitMQ tutorials](https://github.com/rabbitmq/rabbitmq-tutorials).

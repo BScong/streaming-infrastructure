@@ -1,2 +1,4 @@
+node_modules/
+generator/cashreceipt.json
 .DS_Store
 .idea

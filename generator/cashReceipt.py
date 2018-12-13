@@ -2,8 +2,9 @@ from random import randint,uniform,random
 import json
 import math
 import datetime
-from time import time
+from time import time, sleep
 from collections import OrderedDict
+import requests
 
 def generateLine(ind):
 	productCode = '000000'  + str(randint(10,20))
@@ -113,5 +114,13 @@ def writeJSON(jsonObject,destination) : ##+'\\'+'overallStatistiques.json'
 
 
 cashRec=generateCashReceipt('1','1','1','1','1')
-writeJSON(cashRec,'cashreceipt.json')
+#writeJSON(cashRec,'cashreceipt.json')
 print(cashRec)
+sleep(15)
+i = 0
+while True:
+	cashRec=generateCashReceipt(i,randint(0,20),randint(0,20),randint(0,20),randint(0,20))
+	i+=1
+	cashRec = json.loads(json.dumps(cashRec))
+	# print(cashRec)
+	r = requests.post('http://api:3000/receipt', json = cashRec)
