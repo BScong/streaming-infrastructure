@@ -82,9 +82,12 @@ function closeOnErr(err) {
 }
 
 start();
-
+var count = 0
 app.post('/receipt', function(req,res){
-  console.log('Received receipt');
+  count++;
+  if(count%20==0){
+    console.log('Receipts received: ' + count);
+  }
   // TODO: add timestamp
   var message = req.body;
   publish('receipts','',new Buffer(JSON.stringify(message)));
