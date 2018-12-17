@@ -33,6 +33,8 @@ services:
     build: ./mongo_client
     volumes:
     - ./mongo_client:/code
+    depends_on:
+    - rabbitmq
   mongo:
     build: ./mongo
     ports:
