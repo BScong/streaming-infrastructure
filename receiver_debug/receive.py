@@ -16,8 +16,7 @@ channel.queue_bind(exchange='receipts',
                    queue=queue_name)
 
 def callback(ch, method, properties, body):
-    #print(" [x] Received %r" % json.loads(body))
-    return
+    print(" [x] Received %r" % json.loads(body))
 
 channel.basic_consume(callback,
                       queue=queue_name,

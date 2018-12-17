@@ -17,18 +17,6 @@ services:
       - rabbitmq
     ports:
       - "3000:3000"
-  receiver_debug:
-    build: ./receiver_debug
-    volumes:
-     - ./receiver_debug:/code
-    depends_on:
-      - rabbitmq
-  receiver_debug_2:
-    build: ./receiver_debug
-    volumes:
-     - ./receiver_debug:/code
-    depends_on:
-      - rabbitmq
   mongo_client:
     build: ./mongo_client
     volumes:
