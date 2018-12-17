@@ -20,9 +20,8 @@ function sendReceipt(message, queue){
       var ex = 'receipts';
       ch.assertExchange(ex, 'fanout', {durable: false});
       ch.publish(ex, '', new Buffer(message));
-      console.log(" [x] Sent %s", message);
+      //console.log(" [x] Sent %s", message);
     });
-    setTimeout(function() {conn.close();}, 500);
   });
 };
 
