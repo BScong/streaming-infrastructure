@@ -7,6 +7,12 @@ services:
     depends_on:
        - rabbitmq
        - api
+  generator_metrics_debug:
+    build: ./generator_metrics_debug
+    volumes:
+     - ./generator_metrics_debug:/code
+    depends_on:
+       - rabbitmq
   rabbitmq:
     build: ./rabbitmq
     ports:
