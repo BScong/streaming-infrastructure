@@ -7,9 +7,10 @@ app.use(express.json())
 var amqp = require('amqplib/callback_api');
 
 app.post('/receipt', function(req,res){
-  console.log('Received receipt');
+  //console.log('Received receipt');
   // TODO: add timestamp
   var message = req.body;
+  message.receivedTime = new Date().getTime()/1000;
   sendReceipt(JSON.stringify(message), 'hello');
   res.sendStatus(200);
 });

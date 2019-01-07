@@ -5,6 +5,7 @@ import datetime
 from time import time, sleep
 from collections import OrderedDict
 import requests
+#import msgpack
 
 def generateLine(ind):
 	productCode = '000000'  + str(randint(10,20))
@@ -113,13 +114,15 @@ def writeJSON(jsonObject,destination) : ##+'\\'+'overallStatistiques.json'
         json.dump(jsonObject, outfile, indent=4)
 
 
-cashRec=generateCashReceipt('1','1','1','1','1')
-#writeJSON(cashRec,'cashreceipt.json')
-print(cashRec)
-sleep(15)
+sleep(20)
 i = 0
 while True:
 	cashRec=generateCashReceipt(i,randint(0,20),randint(0,20),randint(0,20),randint(0,20))
+	"""with open('data.msgpack', 'w') as outfile:
+		msgpack.pack(data, outfile)
+		with open('data.msgpack') as data_file:
+		data_loaded = json.load(data_file)
+		data_loaded = msgpack.unpack(data_file)"""
 	i+=1
 	cashRec = json.loads(json.dumps(cashRec))
 	# print(cashRec)

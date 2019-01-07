@@ -7,35 +7,30 @@ services:
     depends_on:
        - rabbitmq
        - api
+    restart: always
   rabbitmq:
     build: ./rabbitmq
     ports:
       - "5672:5672"
+    logging:
+      driver: none
   api:
     build: ./api
     depends_on:
       - rabbitmq
     ports:
       - "3000:3000"
-  receiver_debug:
-    build: ./receiver_debug
-    volumes:
-     - ./receiver_debug:/code
-    depends_on:
-      - rabbitmq
-  receiver_debug_2:
-    build: ./receiver_debug
-    volumes:
-     - ./receiver_debug:/code
-    depends_on:
-      - rabbitmq
+    restart: always
   mongo_client:
     build: ./mongo_client
     volumes:
     - ./mongo_client:/code
+    restart: always
     depends_on:
     - rabbitmq
   mongo:
     build: ./mongo
     ports:
       - "27017:27017"
+    logging:
+      driver: none

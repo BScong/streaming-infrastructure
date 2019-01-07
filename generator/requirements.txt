@@ -1,1 +1,2 @@
 requests>=2.20.0
+msgpack>=0.6
