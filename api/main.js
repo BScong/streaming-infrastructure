@@ -66,11 +66,13 @@ function publish(exchange, routingKey, content) {
                            console.error("[AMQP] publish", err);
                            offlinePubQueue.push([exchange, routingKey, content]);
                            pubChannel.connection.close();
+                           return setTimeout(start, 1000);
                          }
                        });
   } catch (e) {
     console.error("[AMQP] publish", e.message);
     offlinePubQueue.push([exchange, routingKey, content]);
+    return setTimeout(start, 1000);
   }
 }
 
