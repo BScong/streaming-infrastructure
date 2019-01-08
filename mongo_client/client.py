@@ -10,8 +10,8 @@ client = MongoClient('mongo', 27017)
 db = client.receipt_database
 collection = db.receipt
 
-#db.receipt.drop()
 print(db.receipt.count_documents({}))
+#db.receipt.remove()
 print('Starting...')
 time.sleep(10)
 
@@ -29,18 +29,19 @@ channel.queue_bind(exchange='receipts',
 
 
 def callback(ch, method, properties, body):
+    collection.insert_one(json.loads(body))
     message = json.loads(body)
-    collection.insert_one(message)
     connectionDelay = time.time() - datetime.datetime.strptime(message['date'], '%Y-%m-%d %H:%M:%S').timestamp()
     networkDelay = time.time() - message['receivedTime']
-    print(networkDelay)
-    """message["connectionDelay"] = connectionDelay
+    message["connectionDelay"] = connectionDelay
     message["networkDelay"] = networkDelay
+    message = json.dumps(message)
     channel.basic_publish(exchange='receipts',
                       routing_key='',
                       body=message)
-    print(" [x] Sent %r" % message)"""
-    #print("---------")
+    print(connectionDelay)
+    print(networkDelay)
+    print("---------")
 
 
 

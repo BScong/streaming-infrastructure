@@ -87,9 +87,9 @@ start();
 var count = 0
 app.post('/receipt', function(req,res){
   count++;
-  if(count%20==0){
+  /*if(count%20==0){
     console.log('Receipts received: ' + count);
-  }
+  }*/
   // TODO: add timestamp
   var message = req.body;
   message.receivedTime = new Date().getTime()/1000;
