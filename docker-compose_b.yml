@@ -1,0 +1,35 @@
+version: '3'
+services:
+  zookeeper:
+    build: ./zookeeper
+    image: zookeeper
+    container_name: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+
+  storm-nimbus:
+    build: ./storm-nimbus
+    image: storm
+    container_name: storm-nimbus
+    command: storm nimbus
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+    restart: always
+    ports:
+      - "6627:6627"
+
+  storm-supervisor:
+    build: ./storm-supervisor
+    image: storm
+    container_name: storm-supervisor
+    command: storm supervisor
+    depends_on:
+      - storm-nimbus
+      - zookeeper
+    links:
+      - storm-nimbus
+      - zookeeper
+    restart: always
