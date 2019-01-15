@@ -4,7 +4,7 @@ FROM ubuntu
 
 RUN apt-get update && \
     apt-get install -y build-essential && \
-    apt-get install -y software-properties-common python-software-properties && \
+    apt-get install -y software-properties-common && \
     apt-get install -y python
 
 # Install Java.
@@ -52,7 +52,7 @@ RUN chown -R "$STORM_USER" "$STORM_CONF_DIR" "$STORM_DATA_DIR" "$STORM_LOG_DIR"
 
 # Install Maven.
 
-ENV MAVEN_VERSION="3.5.3" \
+ENV MAVEN_VERSION="3.6.0" \
     M2_HOME=/usr/lib/mvn
 
 RUN cd /tmp && \

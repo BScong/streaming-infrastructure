@@ -2,7 +2,6 @@ version: '3'
 services:
   zookeeper:
     build: ./zookeeper
-    image: zookeeper
     container_name: zookeeper
     restart: always
     ports:
@@ -10,7 +9,6 @@ services:
 
   storm-nimbus:
     build: ./storm-nimbus
-    image: storm
     container_name: storm-nimbus
     command: storm nimbus
     depends_on:
@@ -20,10 +18,10 @@ services:
     restart: always
     ports:
       - "6627:6627"
+      - "8080:8080"
 
   storm-supervisor:
     build: ./storm-supervisor
-    image: storm
     container_name: storm-supervisor
     command: storm supervisor
     depends_on:
