@@ -7,10 +7,22 @@ services:
     ports:
       - "2181:2181"
 
+  storm-ui:
+    build: ./storm-ui
+    container_name: storm-ui
+    depends_on:
+      - zookeeper
+      - storm-nimbus
+    links:
+      - zookeeper
+      - storm-nimbus
+    restart: always
+    ports:
+      - "8080:8080"
+
   storm-nimbus:
     build: ./storm-nimbus
     container_name: storm-nimbus
-    command: storm nimbus
     depends_on:
       - zookeeper
     links:
@@ -18,12 +30,13 @@ services:
     restart: always
     ports:
       - "6627:6627"
-      - "8080:8080"
+    volumes:
+      - ./storm-nimbus/storm:/code-storm
+      - ./storm-nimbus/storm-starter:/code-storm-starter
 
   storm-supervisor:
     build: ./storm-supervisor
-    container_name: storm-supervisor
-    command: storm supervisor
+
     depends_on:
       - storm-nimbus
       - zookeeper
