@@ -73,9 +73,23 @@ For the database we studied solutions such as MongoDB and Hadoop.
 
 |                         | Hadoop                                                                                                       | MongoDB                                                                                                                        |
 |-------------------------|--------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| Storage                 | Mainly on disk. High amount of values that are store and not consumed immediately.                                 | Mostly on RAM. Works best if values are consumed quickly.                                                                       |
-| Routing and logic       | Dumb routing. The clients need to handle the logic (i.e. keeping track of the offset)                              | Complex routing possible. A lot of logic can be handled by RabbitMQ.                                                            |
-| Implementation and docs | Young project, few documentation. No official Docker image. For other languages, unofficial clients are available. | Very well documented. An official Docker Image is available and multiple official clients are available in different languages. |
-| Dependencies            | Apache Zookeeper                                                                                                   | None                                                                                                                            |
-| Scalability             | Horizontal. We can add Kafka nodes.                                                                                | Vertical. We can add more RAM.                                                                                                  |
-| Performance             | 100k+ requests/sec                                                                                                 | 20k+ requests/sec (per queue)                                                                                                   |
+| Design                 | It is designed to replace RDBMS systems, to process and analyse huge volumes of data.                                 | It is a framework comprised of a software ecosystem, not basically meant to replace RDBMS systems but more as a complement help in archiving data.                                                                       |
+| Strength       | Robust and flexible solution.                              | Excels in multi-threaded distribution.                                                            |
+| Stotage Format | Stores data in collections, in binary JSON format.  | Stores data in any format. |
+| Memory Handling            | Efficient because it is written in C++.                                                                                                   | Better ability to optimize space utilisation.                                                                                                                            |
+| Use cases             | More popular for real-time data needs.                                                                                | Efficient for batch jobs.                                                                                                  |
+
+#### Our choice
+MongoDB seemed to be a better bet in our case:
+ - Firstly, although they are both databases MongoDB is designed to replace RDBMS, while Hadoop acts more as a supplement to help process big volumes of data.  
+ - In our case, we need a simple and robust solution to store our data, without the need of a lot of processing.
+ - The receipts are already generated in JSON so it suits well Mongo's format.
+ - We are not handling huge amounts of data at once, so we don't particularly need efficient batch performance but more of a real-time solution.
+ - MongoDB is more simple to use, and in our case we don't need a complex solution but only basic features.
+
+
+#### References
+ - [Hadoop Vs. MongoDB: Which Platform is Better for Handling Big Data?](https://aptude.com/blog/entry/hadoop-vs-mongodb-which-platform-is-better-for-handling-big-data/)
+ - [Find Out The 9 Best Comparison Between Hadoop vs MongoDB](https://www.educba.com/hadoop-vs-mongodb/)
+ - [Apache Hadoop vs MongoDB: Which Is More Secure?](https://www.upguard.com/articles/apache-hadoop-vs.-mongodb-which-is-more-secure)
+ 
