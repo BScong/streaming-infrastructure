@@ -8,25 +8,17 @@ services:
        - rabbitmq
        - api
     restart: always
-  generator_metrics_debug:
-    build: ./generator_metrics_debug
-    volumes:
-     - ./generator_metrics_debug:/code
-    depends_on:
-       - rabbitmq
+
   rabbitmq:
     build: ./rabbitmq
     ports:
       - "5672:5672"
     logging:
-      driver: none
-  api:
-    build: ./api
-    depends_on:
-      - rabbitmq
-    ports:
-      - "3000:3000"
-    restart: always
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
   mongo_client:
     build: ./mongo_client
     volumes:
@@ -34,9 +26,77 @@ services:
     restart: always
     depends_on:
     - rabbitmq
+
   mongo:
     build: ./mongo
     ports:
-      - "27017:27017"
+     - "27017:27017"
     logging:
-      driver: none
+     driver: none
+
+  api:
+    build: ./api
+    depends_on:
+      - rabbitmq
+    ports:
+      - "3000:3000"
+    restart: always
+
+  zookeeper:
+    build: ./zookeeper
+    container_name: zookeeper
+    depends_on:
+      - rabbitmq
+    restart: always
+    ports:
+      - "2181:2181"
+  storm-ui:
+    build: ./storm-ui
+    container_name: storm-ui
+    depends_on:
+      - zookeeper
+      - storm-nimbus
+      - rabbitmq
+    links:
+      - zookeeper
+      - storm-nimbus
+      - rabbitmq
+    restart: always
+    ports:
+      - "8080:8080"
+  storm-nimbus:
+    build: ./storm-nimbus
+    container_name: storm-nimbus
+    depends_on:
+      - zookeeper
+      - rabbitmq
+    links:
+      - zookeeper
+      - rabbitmq
+    restart: always
+    ports:
+      - "6627:6627"
+  storm-submit:
+    build: ./storm-submit
+    container_name: storm-submit
+    depends_on:
+      - zookeeper
+      - rabbitmq
+      - storm-nimbus
+    links:
+      - zookeeper
+      - rabbitmq
+      - storm-nimbus
+    volumes:
+      - ./storm-submit/topology-jar:/topology-jar
+  storm-supervisor:
+    build: ./storm-supervisor
+    depends_on:
+      - storm-nimbus
+      - zookeeper
+      - rabbitmq
+    links:
+      - storm-nimbus
+      - zookeeper
+      - rabbitmq
+    restart: always

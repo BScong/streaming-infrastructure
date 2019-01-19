@@ -65,6 +65,20 @@ For the exchanges, we have:
 
 Some example code for Java and Python are available in the [utils folder](https://github.com/BScong/streaming-infrastructure/tree/master/utils). They are inspired from [RabbitMQ tutorials](https://github.com/rabbitmq/rabbitmq-tutorials).
 
+### Apache Storm
+
+#### Debugging
+
+Run `docker-compose build` to build.
+Run `docker-compose -f docker-compose_b.yml up --scale storm-supervisor=3` to run with 3 supervisors.
+When everything is running, UI should be available at localhost:8080.
+
+To deploy a jar:
+ - Generate jar locally from `/storm-topology` with `mvn clean install` and `mvn package`. Copy the jar in `storm-submit/topology-jar`.
+ - SSH into storm-submit: Find the storm-submit container id with `docker ps` then execute `docker exec -it STORM-SUBMIT-ID bash`.
+ - In the container, `cd ../topology-jar`
+ - Import the jar: `storm jar /topology-jar/streaming-topology-1.2.2.jar fr.zhong.streaming.StreamingTopology StreamingTopology` (syntax: `storm jar JAR_PATH TOPOLOGY_CLASS NAME`) or you can also run `./import.sh`
+ - Refresh localhost:8080 and topology should appear and be running.
 
 ### Storage of the data
 For the database we studied solutions such as MongoDB and Hadoop.

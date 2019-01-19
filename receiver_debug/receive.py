@@ -8,11 +8,11 @@ print('Started.')
 connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
 channel = connection.channel()
 
-channel.exchange_declare(exchange='receipts',
+channel.exchange_declare(exchange='categories',
                          exchange_type='fanout')
 result = channel.queue_declare(exclusive=True)
 queue_name = result.method.queue
-channel.queue_bind(exchange='receipts',
+channel.queue_bind(exchange='categories',
                    queue=queue_name)
 
 def callback(ch, method, properties, body):
