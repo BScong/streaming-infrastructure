@@ -1,5 +1,14 @@
 version: '3'
 services:
+  receiver_debug:
+    build: ./receiver_debug
+    volumes:
+     - ./receiver_debug:/code
+    depends_on:
+       - rabbitmq
+       - api
+    restart: always
+
   generator:
     build: ./generator
     volumes:

@@ -26,6 +26,8 @@ result = channel.queue_declare(exclusive=True)
 queue_name = result.method.queue
 channel.queue_bind(exchange='receipts',
                    queue=queue_name)
+channel.exchange_declare(exchange='metrics-db',
+                         exchange_type='fanout')
 
 
 def callback(ch, method, properties, body):
@@ -33,15 +35,16 @@ def callback(ch, method, properties, body):
     message = json.loads(body)
     connectionDelay = time.time() - datetime.datetime.strptime(message['date'], '%Y-%m-%d %H:%M:%S').timestamp()
     networkDelay = time.time() - message['receivedTime']
-    message["connectionDelay"] = connectionDelay
-    message["networkDelay"] = networkDelay
-    message = json.dumps(message)
-    channel.basic_publish(exchange='receipts',
+    metrics = {}
+    metrics["connectionDelay"] = connectionDelay
+    metrics["networkDelay"] = networkDelay
+    metrics = json.dumps(metrics)
+    channel.basic_publish(exchange='metrics-db',
                       routing_key='',
-                      body=message)
-    print(connectionDelay)
-    print(networkDelay)
-    print("---------")
+                      body=metrics)
+    #print(connectionDelay)
+    #print(networkDelay)
+    #print("---------")
 
 
 
