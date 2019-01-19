@@ -63,16 +63,15 @@ function publish(exchange, routingKey, content) {
     pubChannel.publish(exchange, routingKey, content, { persistent: true },
                        function(err, ok) {
                          if (err) {
-                           console.error("[AMQP] publish", err);
+                           console.error("[AMQP] publish error", err);
                            offlinePubQueue.push([exchange, routingKey, content]);
-                           pubChannel.connection.close();
-                           return setTimeout(start, 1000);
+                           return setTimeout(start, 10);
                          }
                        });
   } catch (e) {
     console.error("[AMQP] publish", e.message);
     offlinePubQueue.push([exchange, routingKey, content]);
-    return setTimeout(start, 1000);
+    return setTimeout(start, 10);
   }
 }
 
