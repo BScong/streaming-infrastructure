@@ -6,6 +6,8 @@ storm.zookeeper.servers:
 # in order to download the topology jars.
 nimbus.seeds : ["storm-nimbus"]
 
+topology.message.timeout.secs: 70000
+
 # For each Supervisor, we configure how many workers run on that machine.
 # Each worker uses a single port for receiving messages, and this setting
 # defines which ports are open for use. We define four ports here, so Storm will

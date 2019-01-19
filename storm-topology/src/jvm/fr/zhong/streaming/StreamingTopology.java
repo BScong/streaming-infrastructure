@@ -17,6 +17,7 @@ import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.topology.base.BaseBasicBolt;
 import org.apache.storm.topology.base.BaseRichSpout;
+import org.apache.storm.topology.base.BaseWindowedBolt.Duration;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
@@ -49,6 +50,9 @@ public class StreamingTopology {
     builder.setBolt("sumCategories", new SumCategories(), 4).fieldsGrouping("splitCategories", new Fields("category"));
     builder.setBolt("reduceCategories", new ReduceCategories(), 1).shuffleGrouping("sumCategories");
     builder.setBolt("sendCategories", new SendStringToRabbitMQ("rabbitmq","categories"), 1).shuffleGrouping("reduceCategories");
+
+    builder.setBolt("slidingSum", new SlidingWindowBolt().withWindow(Duration.seconds(60)), 1).shuffleGrouping("spout");
+    builder.setBolt("sendMetrics", new SendStringToRabbitMQ("rabbitmq","metrics-storm"), 1).shuffleGrouping("slidingSum");
 
 
     Config conf = new Config();
