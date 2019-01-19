@@ -1,0 +1,9 @@
+# The Nimbus needs to know where the Zookeeper is. This specifies the list of the
+# hosts in the Zookeeper cluster. We're using just one node, of course.
+# 'zookeeper' is the Docker Compose network reference.
+storm.zookeeper.servers:
+  - "zookeeper"
+
+# The worker nodes need to know which machine(s) are the candidate of master
+# in order to download the topology jars.
+nimbus.seeds : ["storm-nimbus"]
