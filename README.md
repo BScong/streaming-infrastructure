@@ -68,14 +68,13 @@ Some example code for Java and Python are available in the [utils folder](https:
 
 #### Debugging
 
-Debug with `docker-compose_b.yml` file.
-Run `docker-compose -f docker-compose_b.yml build` to build.
+Run `docker-compose build` to build.
 Run `docker-compose -f docker-compose_b.yml up --scale storm-supervisor=3` to run with 3 supervisors.
 When everything is running, UI should be available at localhost:8080.
 
 To deploy a jar:
- - SSH into storm-nimbus: Find the storm-nimbus container id with `docker ps` then execute `docker exec -it NIMBUS-ID bash`.
- - In the container, `cd ../code-storm-starter`
- - Then `mvn clean install -DskipTests=true` and `mvn package`
- - Import the jar: `storm jar target/storm-starter-*.jar org.apache.storm.starter.FastWordCountTopology FastWordCountTopology` (syntax: `storm jar JAR_PATH TOPOLOGY_CLASS NAME`)
+ - Generate jar locally from `/storm-topology` with `mvn clean install` and `mvn package`. Copy the jar in `storm-submit/topology-jar`.
+ - SSH into storm-submit: Find the storm-submit container id with `docker ps` then execute `docker exec -it STORM-SUBMIT-ID bash`.
+ - In the container, `cd ../topology-jar`
+ - Import the jar: `storm jar /topology-jar/streaming-topology-1.2.2.jar fr.zhong.streaming.StreamingTopology StreamingTopology` (syntax: `storm jar JAR_PATH TOPOLOGY_CLASS NAME`) or you can also run `./import.sh`
  - Refresh localhost:8080 and topology should appear and be running.
