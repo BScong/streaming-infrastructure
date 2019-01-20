@@ -3,3 +3,5 @@
 # 'zookeeper' is the Docker Compose network reference.
 storm.zookeeper.servers:
   - "zookeeper"
+
+topology.message.timeout.secs: 70000

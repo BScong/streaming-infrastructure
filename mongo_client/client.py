@@ -10,8 +10,7 @@ client = MongoClient('mongo', 27017)
 db = client.receipt_database
 collection = db.receipt
 
-print(db.receipt.count_documents({}))
-#db.receipt.remove()
+db.receipt.delete_many({})
 print('Starting...')
 time.sleep(10)
 
@@ -27,6 +26,11 @@ queue_name = result.method.queue
 channel.queue_bind(exchange='receipts',
                    queue=queue_name)
 
+channel.exchange_declare(exchange='metrics-db',
+                         exchange_type='fanout')
+result = channel.queue_declare(queue = 'api', exclusive=True)
+channel.queue_bind(exchange='metrics-db',
+                   queue='api')
 
 def callback(ch, method, properties, body):
     collection.insert_one(json.loads(body))
@@ -35,14 +39,14 @@ def callback(ch, method, properties, body):
     networkDelay = time.time() - message['receivedTime']
     message["connectionDelay"] = connectionDelay
     message["networkDelay"] = networkDelay
-    message = json.dumps(message)
-    channel.basic_publish(exchange='receipts',
+    metrics = {
+        'connectionDelay' : connectionDelay,
+        'networkDelay' : networkDelay
+    }
+    metrics = json.dumps(metrics)
+    channel.basic_publish(exchange='metrics-db',
                       routing_key='',
-                      body=message)
-    print(connectionDelay)
-    print(networkDelay)
-    print("---------")
-
+                      body=metrics)
 
 
 channel.basic_consume(callback,
@@ -52,11 +56,3 @@ channel.basic_consume(callback,
 print(' [*] Waiting for messages. To exit press CTRL+C')
 channel.start_consuming()
 
-
-
-'''
-post = {"author": "Mike","text": "My first blog post!","tags": ["mongodb", "python", "pymongo"], "date": datetime.datetime.utcnow()}
-collection.insert_one(post)
-
-pprint.pprint(collection.find_one())
-'''

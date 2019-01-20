@@ -12,12 +12,13 @@ def generateLine(ind):
 	categoryCode = ""
 	productCategoryName = "categoryNamus"
 	possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	possibleName=['Alimentation','Boissons','Cigarettes','DepotVentes','Confiseris','FranceTelecom','Grattage','Jounaux','Jouets','Jeux','Librairie','Loto',
-					  'Papetrie','Piles','Paysafecard','PCS','Plans','Photocopies','TabacaRouler','Tabletterie','TicketsPremium','TimbresFiscaux','TimbresPoste','Telephonie','Transcash','UniversalMobile',
-					  'Carterie','Cdiscount','Intercall','Kertel','P.Q.N.','P.Q.R.','SFR','DeveloppementPhotos','Publications','Pains']
+	possibleName=['Boisson','Menu','Sandwich Froid','Viennoiserie','Pain','Sandwich Chaud','Pizza','Patisserie','Confiserie']
+	#possibleName=['Alimentation','Boissons','Cigarettes','DepotVentes','Confiseris','FranceTelecom','Grattage','Jounaux','Jouets','Jeux','Librairie','Loto',
+	#				  'Papetrie','Piles','Paysafecard','PCS','Plans','Photocopies','TabacaRouler','Tabletterie','TicketsPremium','TimbresFiscaux','TimbresPoste','Telephonie','Transcash','UniversalMobile',
+	#				  'Carterie','Cdiscount','Intercall','Kertel','P.Q.N.','P.Q.R.','SFR','DeveloppementPhotos','Publications','Pains']
 	productDescription='---'
 
-	index = int(random() * len(possible))
+	index = int(random() * len(possibleName))
 	categoryCode += possible[index]
 	productCategoryName=possibleName[index]
 	taxPercentage=randint(6,20)
@@ -127,4 +128,4 @@ while True:
 	cashRec = json.loads(json.dumps(cashRec))
 	# print(cashRec)
 	r = requests.post('http://api:3000/receipt', json = cashRec)
-	sleep(uniform(0.20,1))
+	sleep(uniform(1,2))

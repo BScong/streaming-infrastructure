@@ -33,7 +33,6 @@ public class ExtractSum extends BaseBasicBolt {
       String receiptSum = jobj.getAsJsonObject("documentTotal").get("grossTotal").getAsString();
       totalSum += Integer.parseInt(receiptSum.replace(".",""));
       count += 1;
-      System.out.println("Sum: "+ totalSum);
       collector.emit(new Values(totalSum, count));
     }
     catch(Exception e){

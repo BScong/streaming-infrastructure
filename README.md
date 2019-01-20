@@ -3,13 +3,25 @@
 ## Goal
 The goal of the project is to build a streaming architecture to process a high amount of cash receipts and provide insights on data using a dashboard.
 
-## Getting started
-Install [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install/) (automatically installed with Docker in latest versions).
-Run `docker-compose up` to run the images (or `docker-compose up -d` in detached mode). Run `docker-compose build` to re-build the images.
+### Typical use case
+In our app, we are building a complex architecture to process a high amount of receipts from all stores from a same chain in a specific country.
 
-If running in detached mode, you can use `docker-compose ps` to see the processes currently running and `docker-compose stop` to stop them.
+In our example, we are going to take a chain of 1000 famous French bakeries in France (numbers similar to the Paul brand in France). We estimate that average stores have 4 check counters. We take an average of a minute to generate each receipt (an average person spends approximately this time at the counter).
 
-Useful links: [Docker Compose Getting Started](https://docs.docker.com/compose/gettingstarted/), [Dockerfile reference](https://docs.docker.com/engine/reference/builder/), [Docker Docs](https://docs.docker.com/), [Docker Getting Started](https://docs.docker.com/get-started/).
+For those numbers and assuming every counter is open, we can have up to 100 receipts each second.
+
+### Functional specifications
+The app has to present metrics in realtime on a dashboard, presented in a webapp. The numbers shown have to represent the sales for the day with the income generated and the total number of sales by category.
+
+Each store will have an app sending the receipt in the JSON format to the system HTTP rest API. This is the standard case but the system has to be able to support more options in the future.
+
+### Technical specifications
+The system has to process a lot of information. As we estimated, it should support to up to 200 receipts per second.
+
+Also, the system has to be scalable. More stores can be added or exceptional traffic can happen (during clearance for examples).
+The system should be flexible, entrypoints could be added or modified. We should also be able to generate different analytics.
+
+The system has to keep track of all the receipts received, in order to make specific, more complex requests on them.
 
 ## Architecture
 
@@ -17,10 +29,11 @@ Useful links: [Docker Compose Getting Started](https://docs.docker.com/compose/g
 The first task is to generate receipts samples. We use Python for that and a sample of the JSON generated is in [generator/example.json](https://github.com/BScong/streaming-infrastructure/blob/master/generator/example.json). The receipts are then sent to the system entrypoint by an endpoint (REST API).
 
 ### Entrypoint
-The entrypoint to the system is a REST API deployed on port 3000.
-To send a receipt to the system, send a POST request on `localhost:3000/receipt` with the header `Content-Type` set to `application/json`. Then put the receipt JSON as the body.
+The entrypoint to the system is a HTTP REST API with an endpoint named `/receipt`. It takes receipts in the JSON format and forwards it to the message broker.
 
-The API is deployed in Node.js with [Express.js](https://expressjs.com/). We chose that solution because it is easy to implement and very fast (due to the asynchronous nature of Node.js).
+The API is deployed in Node.js with [Express.js](https://expressjs.com/). We chose that solution because it is easy to implement and very fast (due to the asynchronous nature of Node.js). It is also flexible as we can define and accept other formats (for example XML or an online form) and we can also define other endpoints very easily.
+
+To send a receipt to the system, send a POST request on `localhost:3000/receipt` with the header `Content-Type` set to `application/json`. Then put the receipt JSON as the body.
 
 ### Message broker
 For the message broker, we studied different solutions, including RabbitMQ and Apache Kafka.
@@ -51,34 +64,22 @@ We chose to go with RabbitMQ for several reasons:
  - [Understanding When to use RabbitMQ or Apache Kafka, Pivotal](https://content.pivotal.io/blog/understanding-when-to-use-rabbitmq-or-apache-kafka)
  - [Docker image for rabbitmq](https://docs.docker.com/samples/library/rabbitmq/)
  - [RabbitMQ docs](https://www.rabbitmq.com/documentation.html)
- 
- 
+
 
 #### Implementation
-For the implementation, we use [RabbitMQ with Exchanges (Pub/Sub)](https://www.rabbitmq.com/tutorials/tutorial-three-python.html).
+For the implementation, we used [RabbitMQ with Exchanges (Pub/Sub)](https://www.rabbitmq.com/tutorials/tutorial-three-python.html).
 We will use several clients, including Python, NodeJS and Java.
 
 For the exchanges, we have:
  - `receipts`: entrypoint for publishing receipts, every receipt JSON is sent on this exchange, and is then consumed by analytics and persistence (database).
  - `count`: published by analytics to increase the current realtime count/sum of receipts, consumed by frontend.
  - `categories`: published by analytics to increase the current realtime count/sum of products for each category. Consumed by frontend.
+ - `metrics-db`: published by mongo-client for time metrics for receipts. Consumed by frontend.
+ - `metrics-storm`: published by the Storm Topology for metrics for receipts (number of receipts per minute). Consumed by frontend.
 
 Some example code for Java and Python are available in the [utils folder](https://github.com/BScong/streaming-infrastructure/tree/master/utils). They are inspired from [RabbitMQ tutorials](https://github.com/rabbitmq/rabbitmq-tutorials).
 
 ### Apache Storm
-
-#### Debugging
-
-Run `docker-compose build` to build.
-Run `docker-compose -f docker-compose_b.yml up --scale storm-supervisor=3` to run with 3 supervisors.
-When everything is running, UI should be available at localhost:8080.
-
-To deploy a jar:
- - Generate jar locally from `/storm-topology` with `mvn clean install` and `mvn package`. Copy the jar in `storm-submit/topology-jar`.
- - SSH into storm-submit: Find the storm-submit container id with `docker ps` then execute `docker exec -it STORM-SUBMIT-ID bash`.
- - In the container, `cd ../topology-jar`
- - Import the jar: `storm jar /topology-jar/streaming-topology-1.2.2.jar fr.zhong.streaming.StreamingTopology StreamingTopology` (syntax: `storm jar JAR_PATH TOPOLOGY_CLASS NAME`) or you can also run `./import.sh`
- - Refresh localhost:8080 and topology should appear and be running.
 
 ### Storage of the data
 For the database we studied solutions such as MongoDB and Hadoop.
@@ -106,4 +107,37 @@ MongoDB seemed to be a better bet in our case:
  - [Hadoop Vs. MongoDB: Which Platform is Better for Handling Big Data?](https://aptude.com/blog/entry/hadoop-vs-mongodb-which-platform-is-better-for-handling-big-data/)
  - [Find Out The 9 Best Comparison Between Hadoop vs MongoDB](https://www.educba.com/hadoop-vs-mongodb/)
  - [Apache Hadoop vs MongoDB: Which Is More Secure?](https://www.upguard.com/articles/apache-hadoop-vs.-mongodb-which-is-more-secure)
- 
+
+
+### Performances
+
+### Conclusion
+
+### Future improvements
+Some improvements can be made to the current system, such as:
+ - Automatic scaling, by adding a load balancer or a script monitoring the load, we can detect high bursts of data and automatically scale the system by adding workers or supervisors.
+ - Support different file format as input
+
+## Technical documentation
+
+### Getting Started
+Install [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install/) (automatically installed with Docker in latest versions).
+Run `docker-compose up` to run the images (or `docker-compose up -d` in detached mode). Run `docker-compose build` to re-build the images.
+
+If running in detached mode, you can use `docker-compose ps` to see the processes currently running and `docker-compose stop` to stop them.
+To remove the images, run `docker-compose rm`.
+
+Useful links: [Docker Compose Getting Started](https://docs.docker.com/compose/gettingstarted/), [Dockerfile reference](https://docs.docker.com/engine/reference/builder/), [Docker Docs](https://docs.docker.com/), [Docker Getting Started](https://docs.docker.com/get-started/).
+
+### Debugging for Apache Storm
+
+Run `docker-compose build` to build.
+Run `docker-compose up --scale storm-supervisor=3` to run with 3 supervisors.
+When everything is running, UI should be available at localhost:8080.
+
+To deploy a jar:
+ - Generate jar locally from `/storm-topology` with `mvn clean install` and `mvn package`. Copy the jar in `storm-submit/topology-jar`.
+ - SSH into storm-submit: Find the storm-submit container id with `docker ps` then execute `docker exec -it STORM-SUBMIT-ID bash`.
+ - In the container, `cd ../topology-jar`
+ - Import the jar: `storm jar /topology-jar/streaming-topology-1.2.2.jar fr.zhong.streaming.StreamingTopology StreamingTopology` (syntax: `storm jar JAR_PATH TOPOLOGY_CLASS NAME`) or you can also run `./import.sh`
+ - Refresh localhost:8080 and topology should appear and be running.

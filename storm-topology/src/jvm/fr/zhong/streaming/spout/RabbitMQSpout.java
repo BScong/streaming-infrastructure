@@ -74,22 +74,18 @@ public class RabbitMQSpout extends BaseRichSpout {
 
   @Override
   public void nextTuple() {
-    System.out.println("Next tuple");
     try {
       if(!_chan.isOpen()){
         _chan = getRabbitMQChannel(host, exchangeName);
       }
       GetResponse response = _chan.basicGet(this.queueName, this.autoAck);
-      System.out.println("Received tuple");
       if (response == null) {
           // No message retrieved.
-          System.out.println("Null response");
       } else {
           //AMQP.BasicProperties props = response.getProps();
           String message = new String(response.getBody(), "UTF-8");
           long deliveryTag = response.getEnvelope().getDeliveryTag();
           _collector.emit(new Values(message));
-          System.out.println(message);
       }
     } catch(Exception e){
       try{
