@@ -42,7 +42,7 @@ public class StreamingTopology {
 
     builder.setSpout("spout", new RabbitMQSpout("rabbitmq", "receipts"), 4);
 
-    builder.setBolt("sum", new ExtractSum(), 2).shuffleGrouping("spout");
+    builder.setBolt("sum", new ExtractSum(), 1).shuffleGrouping("spout");
     builder.setBolt("reduceSum", new ReduceSum(), 1).shuffleGrouping("sum");
     builder.setBolt("sendSum", new SendStringToRabbitMQ("rabbitmq","count"), 1).shuffleGrouping("reduceSum");
 
