@@ -117,7 +117,8 @@ def writeJSON(jsonObject,destination) : ##+'\\'+'overallStatistiques.json'
 
 sleep(20)
 i = 0
-while True:
+BURST_NUMBER = 10000;
+while i<BURST_NUMBER:
 	cashRec=generateCashReceipt(i,randint(0,20),randint(0,20),randint(0,20),randint(0,20))
 	"""with open('data.msgpack', 'w') as outfile:
 		msgpack.pack(data, outfile)
@@ -127,5 +128,4 @@ while True:
 	i+=1
 	cashRec = json.loads(json.dumps(cashRec))
 	# print(cashRec)
-	r = requests.post('http://api:3000/receipt', json = cashRec)
-	sleep(uniform(1,2))
+	r = requests.post('http://localhost:3000/receipt', json = cashRec)
