@@ -49,7 +49,7 @@ public class SendStringToRabbitMQ extends BaseBasicBolt {
     String sentence = tuple.getString(0);
     try {
         _chan.basicPublish(this.exchangeName, "", null, sentence.getBytes("UTF-8"));
-        System.out.println(" [x] Sent '" + sentence + "'");
+        //System.out.println(" [x] Sent '" + sentence + "'");
     } catch(Exception e){
       _chan = getRabbitMQChannel(host, exchangeName);
       e.printStackTrace();

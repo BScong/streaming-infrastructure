@@ -52,7 +52,9 @@ public class StreamingTopology {
     builder.setBolt("sendCategories", new SendStringToRabbitMQ("rabbitmq","categories"), 1).shuffleGrouping("reduceCategories");
 
     builder.setBolt("slidingSum", new SlidingWindowBolt().withWindow(Duration.seconds(60)), 1).shuffleGrouping("spout");
-    builder.setBolt("sendMetrics", new SendStringToRabbitMQ("rabbitmq","metrics-storm"), 1).shuffleGrouping("slidingSum");
+    builder.setBolt("time", new TimeBolt().withWindow(Duration.seconds(60)), 1).shuffleGrouping("spout");
+    builder.setBolt("reduceMetrics", new ReduceMetrics(), 1).shuffleGrouping("slidingSum").shuffleGrouping("time");
+    builder.setBolt("sendMetrics", new SendStringToRabbitMQ("rabbitmq","metrics-storm"), 1).shuffleGrouping("reduceMetrics");
 
 
     Config conf = new Config();

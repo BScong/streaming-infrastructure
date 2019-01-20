@@ -81,7 +81,6 @@ public class RabbitMQSpout extends BaseRichSpout {
       GetResponse response = _chan.basicGet(this.queueName, this.autoAck);
       if (response == null) {
           // No message retrieved.
-          System.out.println("Null response");
       } else {
           //AMQP.BasicProperties props = response.getProps();
           String message = new String(response.getBody(), "UTF-8");
