@@ -110,7 +110,8 @@ MongoDB seemed to be a better bet in our case:
 ### Presentation
 For our presentation layer, we chose to implement a web application to visualise our different measures using Dash.
 Dash is a framework by Plotly that is used to easily create analytical and interactive web applications in Python, built on top of Plotly.js, React and Flask.
-On the presentation layer, we consume the previously described metrics queues from RabbitMQ and present the current realtime revenue, the sales per category of products and other metrics on the system itself. These metrics are consumed continuously and the graphs are updated every second. Other metrics can easily be added on the dashboard if needed in the future.
+
+The application is subscribed to the previously described exchanges from RabbitMQ, to present the current realtime revenue, the sales per category of products and other metrics on the whole system itself. These metrics are consumed continuously and the graphs are updated every second. Other metrics can easily be added on the dashboard if needed in the future.
 
 ### Performances
 We built a generator sending 1 to 2 receipts every second to our entrypoint by waiting a random amount of time between 0.5s to 1s after each receipt. With that generator, we reach an average of 300 receipts ingested per minute and an average ingestion time of 30 sec.
