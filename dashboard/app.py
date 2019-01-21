@@ -117,7 +117,8 @@ def updateStorm(data):
 
 
 def callback_storm(ch, method, properties, body):
-    updateStorm(body)
+    #print(" [x] Received storm %r" % json.loads(body))
+    updateStorm(json.loads(body))
 
 channel_metrics_storm.basic_consume(callback_storm,queue_name_metrics_storm, no_ack=True)
 
@@ -151,7 +152,7 @@ def interfaceSum(n):
     return [
         html.Span('Daily revenue: {}'.format(data['sum'][-1]), style=style),
         html.Span('Number of receipts: {}'.format(data['count']), style=style),
-        html.Span('Average ingested/min : {}'.format(data_metrics_storm['averageMsSystem']), style=style)
+        html.Span('Average ingested/min : {}'.format(data_metrics_storm['averagePerMinute'][-1]), style=style)
 
     ]
 
@@ -194,7 +195,7 @@ def display(n):
 
 
 def start_multi():
-    executor = ProcessPoolExecutor(max_workers=4)
+    executor = ThreadPoolExecutor(max_workers=4)
 
     executor.submit(channel.start_consuming)
     executor.submit(channel_cat.start_consuming)
