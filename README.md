@@ -102,6 +102,10 @@ MongoDB seemed to be a better bet in our case:
  - We are not handling huge amounts of data at once, so we don't particularly need efficient batch performance but more of a real-time solution.
  - MongoDB is more simple to use, and in our case we don't need a complex solution but only basic features.
 
+### Presentation
+For our presentation layer, we chose to implement a web application to visualise our different measures using Dash.
+Dash is a framework by Plotly that is used to easily create analytical and interactive web applications in Python, built on top of Plotly.js, React and Flask.
+On the presentation layer, we consume the previously described metrics queues from RabbitMQ and present the current realtime revenue, the sales per category of products and other metrics on the system itself. These metrics are consumed continuously and the graphs are updated every second. Other metrics can easily be added on the dashboard if needed in the future.
 
 #### References
  - [Hadoop Vs. MongoDB: Which Platform is Better for Handling Big Data?](https://aptude.com/blog/entry/hadoop-vs-mongodb-which-platform-is-better-for-handling-big-data/)
@@ -132,6 +136,7 @@ Some improvements can be made to the current system, such as:
 ### Getting Started
 Install [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install/) (automatically installed with Docker in latest versions).
 Run `docker-compose up` to run the images (or `docker-compose up -d` in detached mode). Run `docker-compose build` to re-build the images.
+When everything is running, the dashboard is available at localhost:8050.
 
 If running in detached mode, you can use `docker-compose ps` to see the processes currently running and `docker-compose stop` to stop them.
 To remove the images, run `docker-compose rm`.
