@@ -11,6 +11,17 @@ services:
        - zookeeper
     restart: always
 
+  receiver_debug:
+    build: ./receiver_debug
+    volumes:
+     - ./receiver_debug:/code
+    depends_on:
+       - rabbitmq
+       - api
+       - zookeeper
+       - storm-nimbus
+    restart: always
+    
   generator:
     build: ./generator
     volumes:

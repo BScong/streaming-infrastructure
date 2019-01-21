@@ -131,4 +131,4 @@ while True:
 	cashRec = json.loads(json.dumps(cashRec))
 	# print(cashRec)
 	r = requests.post('http://api:3000/receipt', json = cashRec)
-	sleep(uniform(0.5,1))
+	sleep(uniform(0.1,0.2))
