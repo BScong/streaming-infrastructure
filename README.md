@@ -102,16 +102,15 @@ MongoDB seemed to be a better bet in our case:
  - We are not handling huge amounts of data at once, so we don't particularly need efficient batch performance but more of a real-time solution.
  - MongoDB is more simple to use, and in our case we don't need a complex solution but only basic features.
 
-### Presentation
-For our presentation layer, we chose to implement a web application to visualise our different measures using Dash.
-Dash is a framework by Plotly that is used to easily create analytical and interactive web applications in Python, built on top of Plotly.js, React and Flask.
-On the presentation layer, we consume the previously described metrics queues from RabbitMQ and present the current realtime revenue, the sales per category of products and other metrics on the system itself. These metrics are consumed continuously and the graphs are updated every second. Other metrics can easily be added on the dashboard if needed in the future.
-
 #### References
  - [Hadoop Vs. MongoDB: Which Platform is Better for Handling Big Data?](https://aptude.com/blog/entry/hadoop-vs-mongodb-which-platform-is-better-for-handling-big-data/)
  - [Find Out The 9 Best Comparison Between Hadoop vs MongoDB](https://www.educba.com/hadoop-vs-mongodb/)
  - [Apache Hadoop vs MongoDB: Which Is More Secure?](https://www.upguard.com/articles/apache-hadoop-vs.-mongodb-which-is-more-secure)
 
+### Presentation
+For our presentation layer, we chose to implement a web application to visualise our different measures using Dash.
+Dash is a framework by Plotly that is used to easily create analytical and interactive web applications in Python, built on top of Plotly.js, React and Flask.
+On the presentation layer, we consume the previously described metrics queues from RabbitMQ and present the current realtime revenue, the sales per category of products and other metrics on the system itself. These metrics are consumed continuously and the graphs are updated every second. Other metrics can easily be added on the dashboard if needed in the future.
 
 ### Performances
 We built a generator sending 1 to 2 receipts every second to our entrypoint by waiting a random amount of time between 0.5s to 1s after each receipt. With that generator, we reach an average of 300 receipts ingested per minute and an average ingestion time of 30 sec.
