@@ -44,17 +44,17 @@ public class StreamingTopology {
 
     builder.setBolt("sum", new ExtractSum(), 1).shuffleGrouping("spout");
     builder.setBolt("reduceSum", new ReduceSum(), 1).shuffleGrouping("sum");
-    builder.setBolt("sendSum", new SendStringToRabbitMQ("rabbitmq","count"), 1).shuffleGrouping("reduceSum");
+    builder.setBolt("sendSum", new SendStringToRabbitMQ("rabbitmq","count").withTumblingWindow(Duration.of(500)), 1).shuffleGrouping("reduceSum");
 
     builder.setBolt("splitCategories", new SplitCategories(), 2).shuffleGrouping("spout");
     builder.setBolt("sumCategories", new SumCategories(), 4).fieldsGrouping("splitCategories", new Fields("category"));
     builder.setBolt("reduceCategories", new ReduceCategories(), 1).shuffleGrouping("sumCategories");
-    builder.setBolt("sendCategories", new SendStringToRabbitMQ("rabbitmq","categories"), 1).shuffleGrouping("reduceCategories");
+    builder.setBolt("sendCategories", new SendStringToRabbitMQ("rabbitmq","categories").withTumblingWindow(Duration.of(500)), 1).shuffleGrouping("reduceCategories");
 
     builder.setBolt("slidingSum", new SlidingWindowBolt().withWindow(Duration.seconds(60)), 1).shuffleGrouping("spout");
     builder.setBolt("time", new TimeBolt().withWindow(Duration.seconds(60)), 1).shuffleGrouping("spout");
     builder.setBolt("reduceMetrics", new ReduceMetrics(), 1).shuffleGrouping("slidingSum").shuffleGrouping("time");
-    builder.setBolt("sendMetrics", new SendStringToRabbitMQ("rabbitmq","metrics-storm"), 1).shuffleGrouping("reduceMetrics");
+    builder.setBolt("sendMetrics", new SendStringToRabbitMQ("rabbitmq","metrics-storm").withTumblingWindow(Duration.of(500)), 1).shuffleGrouping("reduceMetrics");
 
 
     Config conf = new Config();

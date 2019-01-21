@@ -59,25 +59,18 @@ services:
       - zookeeper
       - storm-nimbus
       - rabbitmq
-    links:
-      - zookeeper
-      - storm-nimbus
-      - rabbitmq
-    restart: always
     ports:
       - "8080:8080"
+    restart: always
   storm-nimbus:
     build: ./storm-nimbus
     container_name: storm-nimbus
     depends_on:
       - zookeeper
       - rabbitmq
-    links:
-      - zookeeper
-      - rabbitmq
-    restart: always
     ports:
       - "6627:6627"
+    restart: always
   storm-submit:
     build: ./storm-submit
     container_name: storm-submit
@@ -85,19 +78,12 @@ services:
       - zookeeper
       - rabbitmq
       - storm-nimbus
-    links:
-      - zookeeper
-      - rabbitmq
-      - storm-nimbus
     volumes:
       - ./storm-submit/topology-jar:/topology-jar
+    restart: on-failure
   storm-supervisor:
     build: ./storm-supervisor
     depends_on:
-      - storm-nimbus
-      - zookeeper
-      - rabbitmq
-    links:
       - storm-nimbus
       - zookeeper
       - rabbitmq
