@@ -127,7 +127,7 @@ app.layout = html.Div(
     html.Div([
         html.H4('Sales Live Feed'),
         html.Div(id='live-update-text'),
-        dcc.Graph(id='live-update-graph',animate=True),
+        dcc.Graph(id='live-update-graph',animate=False),
         dcc.Interval(
             id='interval-component-graph',
             interval=2000, # in milliseconds
@@ -148,7 +148,7 @@ app.layout = html.Div(
               [Input('interval-component', 'n_intervals')])
 def interfaceSum(n):
     #data = np.load('dataSum.npy').item()
-    style = {'padding': '20px', 'fontSize': '24px'}
+    style = {'padding': '20px', 'fontSize': '32px'}
     return [
         html.Span('Daily revenue: {}'.format(data['sum'][-1]), style=style),
         html.Span('Number of receipts: {}'.format(data['count']), style=style),
@@ -163,9 +163,9 @@ def display(n):
     #print(data_cat)
     fig = plotly.tools.make_subplots(rows=2, cols=2, vertical_spacing=0.2)
     fig['layout']['margin'] = {
-        'l': 30, 'r': 10, 'b': 30, 't': 30
+        'l': 30, 'r': 10, 'b': 30, 't': 10
     }
-    fig['layout']['legend'] = {'x': 1, 'y': 0, 'xanchor': 'right'}
+    fig['layout']['legend'] = {'x': 0, 'y': 1, 'xanchor': 'left'}
 
     fig.append_trace({
         'x': data['time'],
