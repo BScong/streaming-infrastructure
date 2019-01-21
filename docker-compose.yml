@@ -1,5 +1,16 @@
 version: '3'
 services:
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "8050:8050"
+    volumes:
+     - ./dashboard:/code
+    depends_on:
+       - rabbitmq
+       - zookeeper
+    restart: always
+
   generator:
     build: ./generator
     volumes:
