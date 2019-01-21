@@ -110,6 +110,15 @@ MongoDB seemed to be a better bet in our case:
 
 
 ### Performances
+We built a generator sending 1 to 2 receipts every second to our entrypoint by waiting a random amount of time between 0.5s to 1s after each receipt. With that generator, we reach an average of 300 receipts ingested per minute and an average ingestion time of 30 sec.
+
+We built a generator sending 5 to 10 receipts every second to our entrypoint by waiting a random amount of time between 0.1s to 0.2s after each receipt. With that generator, we reach an average of 1500 receipts ingested per minute.
+
+We also built a burst generator that is sending 10,000 receipts to our entrypoint as fast as possible. With that generator, we can reach up to 11,000 receipts ingested per minute.
+
+In the figure below, we generate 5 to 10 receipts per second at the beginning. We then trigger a burst and the number of receipts ingested per minute increases. In blue, the plot represents the total benefits for the day. In green the average number of receipts ingested per minute. The orange plot represents sales by categories.
+
+![Metrics for receipts](metrics-receipts.png)
 
 ### Conclusion
 
