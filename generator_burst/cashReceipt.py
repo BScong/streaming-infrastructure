@@ -1,6 +1,7 @@
 from random import randint,uniform,random
 import json
 import math
+import numpy
 import datetime
 from time import time, sleep
 from collections import OrderedDict
@@ -13,12 +14,14 @@ def generateLine(ind):
 	productCategoryName = "categoryNamus"
 	possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	possibleName=['Boisson','Menu','Sandwich Froid','Viennoiserie','Pain','Sandwich Chaud','Pizza','Patisserie','Confiserie']
+	indexName = [0,1,2,3,4,5,6,7,8]
+	weightsName = [0.05, 0.2, 0.15, 0.1, 0.25, 0.05, 0.1, 0.08, 0.02]
 	#possibleName=['Alimentation','Boissons','Cigarettes','DepotVentes','Confiseris','FranceTelecom','Grattage','Jounaux','Jouets','Jeux','Librairie','Loto',
 	#				  'Papetrie','Piles','Paysafecard','PCS','Plans','Photocopies','TabacaRouler','Tabletterie','TicketsPremium','TimbresFiscaux','TimbresPoste','Telephonie','Transcash','UniversalMobile',
 	#				  'Carterie','Cdiscount','Intercall','Kertel','P.Q.N.','P.Q.R.','SFR','DeveloppementPhotos','Publications','Pains']
 	productDescription='---'
 
-	index = int(random() * len(possibleName))
+	index = numpy.random.choice(indexName, p=weightsName)
 	categoryCode += possible[index]
 	productCategoryName=possibleName[index]
 	taxPercentage=randint(6,20)

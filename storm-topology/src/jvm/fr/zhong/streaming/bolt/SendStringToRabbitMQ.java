@@ -10,12 +10,15 @@ import org.apache.storm.StormSubmitter;
 import org.apache.storm.generated.*;
 import org.apache.storm.spout.SpoutOutputCollector;
 import org.apache.storm.task.TopologyContext;
+import org.apache.storm.task.OutputCollector;
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.topology.base.BaseBasicBolt;
 import org.apache.storm.topology.base.BaseRichSpout;
+import org.apache.storm.topology.base.BaseWindowedBolt;
+import org.apache.storm.windowing.TupleWindow;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
@@ -26,9 +29,11 @@ import com.google.gson.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 
-public class SendStringToRabbitMQ extends BaseBasicBolt {
+public class SendStringToRabbitMQ extends BaseWindowedBolt {
   Channel _chan;
+  private OutputCollector collector;
   String exchangeName;
   String host;
   String queueName;
@@ -39,21 +44,34 @@ public class SendStringToRabbitMQ extends BaseBasicBolt {
   }
 
   @Override
-  public void prepare(Map conf, TopologyContext context) {
+  public void prepare(Map topoConf, TopologyContext context, OutputCollector collector) {
       _chan = getRabbitMQChannel(host, exchangeName);
+      this.collector = collector;
   }
 
 
   @Override
-  public void execute(Tuple tuple, BasicOutputCollector collector) {
-    String sentence = tuple.getString(0);
-    try {
-        _chan.basicPublish(this.exchangeName, "", null, sentence.getBytes("UTF-8"));
-        //System.out.println(" [x] Sent '" + sentence + "'");
-    } catch(Exception e){
-      _chan = getRabbitMQChannel(host, exchangeName);
-      e.printStackTrace();
+  public void execute(TupleWindow inputWindow) {
+    List<Tuple> tuplesInWindow = inputWindow.get();
+    String sentence = "";
+    if (tuplesInWindow.size() > 0) {
+        /*
+         * Since this is a tumbling window calculation,
+         * we use all the tuples in the window to compute the avg.
+         */
+        for (Tuple tuple : tuplesInWindow) {
+            sentence = tuple.getString(0);
+        }
+
+        try {
+          _chan.basicPublish(this.exchangeName, "", null, sentence.getBytes("UTF-8"));
+          //System.out.println(" [x] Sent '" + sentence + "'");
+        } catch(Exception e){
+          _chan = getRabbitMQChannel(host, exchangeName);
+          e.printStackTrace();
+        }
     }
+
   }
 
   @Override

@@ -65,7 +65,7 @@ def updateSum(val):
 
 
 def callback(ch, method, properties, body):
-    print(" [x] Received %r" % json.loads(body))
+    #print(" [x] Received %r" % json.loads(body))
     updateSum(json.loads(body))
 
 
