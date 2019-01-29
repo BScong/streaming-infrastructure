@@ -46,7 +46,6 @@ For the message broker, we studied different solutions, including RabbitMQ and A
 | Routing and logic       | Dumb routing. The clients need to handle the logic (i.e. keeping track of the offset)                              | Complex routing possible. A lot of logic can be handled by RabbitMQ.                                                            |
 | Implementation and docs | Young project, few documentation. No official Docker image. For other languages, unofficial clients are available. | Very well documented. An official Docker Image is available and multiple official clients are available in different languages. |
 | Dependencies            | Apache Zookeeper                                                                                                   | None                                                                                                                            |
-| Scalability             | Horizontal. We can add Kafka nodes.                                                                                | Vertical. We can add more RAM.                                                                                                  |
 | Performance             | 100k+ requests/sec                                                                                                 | 20k+ requests/sec (per queue)                                                                                                   |
 
 #### Our choice
@@ -120,7 +119,7 @@ We built a generator sending 5 to 10 receipts every second to our entrypoint by 
 
 We also built a burst generator that is sending 10,000 receipts to our entrypoint as fast as possible. With that generator, we can reach up to 11,000 receipts ingested per minute.
 
-In the figure below, we generate 5 to 10 receipts per second at the beginning. We then trigger a burst and the number of receipts ingested per minute increases. In blue, the plot represents the total benefits for the day. In green the average number of receipts ingested per minute. The orange plot represents sales by categories.
+In the figure below, we generate 5 to 10 receipts per second at the beginning. We then trigger a burst and the number of receipts ingested per minute increases. We see that during the burst, there is a time where the average number of receipts ingested by minute decreases but increases immediately after that, this moment is matching the time when the burst script ends, and that more resources can be allocated to Apache Storm. In blue, the plot represents the total benefits for the day. In green the average number of receipts ingested per minute. The orange plot represents sales by categories.
 
 ![Metrics for receipts](metrics-receipts.png)
 
