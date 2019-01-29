@@ -8,15 +8,15 @@ In our app, we are building a complex architecture to process a high amount of r
 
 In our example, we are going to take a chain of 1000 famous French bakeries in France (numbers similar to the Paul brand in France). We estimate that average stores have 4 check counters. We take an average of a minute to generate each receipt (an average person spends approximately this time at the counter).
 
-For those numbers and assuming every counter is open, we can have up to 100 receipts each second.
+For those numbers and assuming every counter is open, we can have up to 100 receipts each second at peak hours.
 
 ### Functional specifications
 The app has to present metrics in realtime on a dashboard, presented in a webapp. The numbers shown have to represent the sales for the day with the income generated and the total number of sales by category.
 
-Each store will have an app sending the receipt in the JSON format to the system HTTP rest API. This is the standard case but the system has to be able to support more options in the future.
+Each store will have an app sending the receipt in the JSON format to the system HTTP REST API. This is the standard case but the system has to be able to support more options in the future.
 
 ### Technical specifications
-The system has to process a lot of information. As we estimated, it should support to up to 200 receipts per second.
+The system has to process a lot of information. As we estimated, it should support to up to 100 receipts per second.
 
 Also, the system has to be scalable. More stores can be added or exceptional traffic can happen (during clearance for examples).
 The system should be flexible, entrypoints could be added or modified. We should also be able to generate different analytics.
@@ -124,11 +124,27 @@ In the figure below, we generate 5 to 10 receipts per second at the beginning. W
 ![Metrics for receipts](metrics-receipts.png)
 
 ### Conclusion
+Building an infrastructure to process a high amount of receipts and compute realtime analytics is a complex task.
+
+We managed to divide this complex architecture into several subsytems: generator, entrypoint, database, message broker, computation, visualisation.
+
+We created two generators, one as a continuous generator and one as a burst generator. Those two generators are simulating stores. They are sending receipts to the entrypoint, which is an HTTP API.
+
+The entrypoint then sends the receipts to the message broker. We use RabbitMQ. It was a good solution as it was simple to deploy, efficient and basic messaging was easy to implement. We used the message broker to exchange messages between all of our subsytems. It handled receipts, metrics and analytics, all under the JSON format.
+
+This project allowed us to discover Storm. However, when we made the choices regarding the data processing tool by comparing different existing systems, we didn’t know much about those so that  we now realize that the choice was not the most suitable.
+
+Indeed, the general implementation of Storm has been quite complicated for several reasons.
+On one hand, before starting we saw that there was a library to connect RabbitMQ with Storm, but it was actually no longer functional. So the connection between the two was much more complicated to implement than expected.
+On the other hand, we did not see that Storm needed Zookeeper dependency to work.
+Finally it turned out that stream processing (once at a time) was not the best choice for our project. Indeed a batch processing might have been able to allow more processing such as the sum of several receipts to limit the calculations in the presentation part. This can also be done in Apache Storm, but with a higher price implementation-wise.
 
 ### Future improvements
 Some improvements can be made to the current system, such as:
  - Automatic scaling, by adding a load balancer or a script monitoring the load, we can detect high bursts of data and automatically scale the system by adding workers or supervisors.
- - Support different file format as input
+ - Fault-tolerance. The system is currently sensible to faults and crashes. RabbitMQ is running on a single node and we should deploy it as clusters to avoid availaibility problems. The database is also running on a single node and doesn't use any replication.
+ - Support different file format as input. Currently, we only support JSON as the input format to the API. We could improve by supporting other file formats, such as XML or online forms.
+ - An other idea is to try our architecture with a batch-processing tool (such as Spark) to compare the efficiency.
 
 ## Technical documentation
 
